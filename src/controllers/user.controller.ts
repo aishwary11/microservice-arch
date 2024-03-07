@@ -47,6 +47,7 @@ export const generateTOTP = async (req: Request, res: Response) => {
         },
       );
     }
+    return errorResp(res, 400, 'Could not generate OTP. Please try again.');
   } catch (error) {
     return errorResp(res, 400, 'Could not generate OTP. Please try again.');
   }
