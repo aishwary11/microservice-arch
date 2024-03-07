@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import qrcode from 'qrcode';
-import speakeasy from 'speakeasy';
+import { totpSecret } from '../common/utils/commonutils';
 import db from '../common/utils/db';
 import { generateJWT } from '../common/utils/jwt';
 import { errorResp, successResp } from '../common/utils/responsehelper';
@@ -27,10 +27,9 @@ export const createUser = async (req: Request, res: Response) => {
 
 export const generateTOTP = async (req: Request, res: Response) => {
   try {
-    const secret = speakeasy.generateSecret({ length: 20, name: 'Aishwary TOTP' });
-    if (secret.otpauth_url) {
+    if (totpSecret.otpauth_url) {
       qrcode.toDataURL(
-        secret.otpauth_url,
+        totpSecret.otpauth_url,
         {
           color: {
             dark: '#ededed',
@@ -43,7 +42,7 @@ export const generateTOTP = async (req: Request, res: Response) => {
         },
         async (err, data_url) => {
           if (err) return errorResp(res, 400, 'Could not generate OTP. Please try again.');
-          await db('users').where('name', '=', 'Aishwary Shah').update('totp', secret.base32);
+          await db('users').where('name', '=', 'Aishwary Shah').update('totp', totpSecret.base32);
           return res.send(`<img src="${data_url}">`);
         },
       );

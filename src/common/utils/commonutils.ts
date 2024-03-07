@@ -1,7 +1,7 @@
 import axios from 'axios';
-import { cacheURL } from '../../types/types';
 import NodeCache from 'node-cache';
 import speakeasy from 'speakeasy';
+import { cacheURL } from '../../types/types';
 const cache = new NodeCache({ stdTTL: 10 });
 let cacheUrl: cacheURL = {};
 
@@ -25,12 +25,5 @@ export const cacheData = async (key: string) => {
   return data;
 };
 
-export const totpSecret = speakeasy.generateSecret({ length: 20 }).base32;
-// export const totpGenerator = () => {
-//   const secret = speakeasy.generateSecret({ length: 20 }).base32;
-//   const token = speakeasy.totp({
-//     secret,
-//     encoding: 'base32'
-//   });
-//   return { token, secret };
-// };
+export const totpSecret = speakeasy.generateSecret({ name: 'Aishwary TOTP' });
+export const verifyTotp = (secret: string, totp: string) => speakeasy.totp.verify({ secret, encoding: 'base32', token: totp });

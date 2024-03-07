@@ -1,8 +1,8 @@
-import { NextFunction, Request, Response } from 'express';
-import db from '../utils/db';
 import bcrypt from 'bcrypt';
+import { NextFunction, Request, Response } from 'express';
+import { verifyTotp } from '../utils/commonutils';
+import db from '../utils/db';
 import { errorResp } from '../utils/responsehelper';
-import speakeasy from 'speakeasy';
 
 const checkUserAndTotp = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -11,7 +11,7 @@ const checkUserAndTotp = async (req: Request, res: Response, next: NextFunction)
     if (!userDetails.length) return errorResp(res, 401, "Email doesn't exists");
     const isLogin = await bcrypt.compare(password, userDetails[0].password);
     if (!isLogin) return errorResp(res, 401, 'An error occurred during the login process');
-    const isTotpValid = speakeasy.totp.verify({ secret: userDetails[0].totp, encoding: 'base32', token: totp });
+    const isTotpValid = verifyTotp(userDetails[0].totp, totp);
     if (!isTotpValid) return errorResp(res, 401, 'Otp is not valid');
     next();
   } catch (error) {
