@@ -5,6 +5,7 @@ import { createUser, generateTOTP, loginUser } from '../controllers/user.control
 const router: Router = Router();
 
 router.get('/generate-totp', generateTOTP);
+// router.get('/otp', generateOTP);
 router.post('/login', validateLoginBody, checkUserAndTotp, loginUser);
 router.post('/create', validateUserBody, createUser);
 

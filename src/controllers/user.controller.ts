@@ -27,28 +27,37 @@ export const createUser = async (req: Request, res: Response) => {
 
 export const generateTOTP = async (req: Request, res: Response) => {
   try {
-    if (totpSecret.otpauth_url) {
-      qrcode.toDataURL(
-        totpSecret.otpauth_url,
-        {
-          color: {
-            dark: '#ededed',
-            light: '#5b87b9',
-          },
-          errorCorrectionLevel: 'H',
-          type: 'image/jpeg',
-          margin: 1,
-          maskPattern: 4,
+    if (!totpSecret.otpauth_url) return errorResp(res, 400, 'TOTP Secret is not properly configured.');
+    qrcode.toDataURL(
+      totpSecret.otpauth_url,
+      {
+        color: {
+          dark: '#ededed',
+          light: '#5b87b9',
         },
-        async (err, data_url) => {
-          if (err) return errorResp(res, 400, 'Could not generate OTP. Please try again.');
-          await db('users').where('name', '=', 'Aishwary Shah').update('totp', totpSecret.base32);
-          return res.send(`<img src="${data_url}">`);
-        },
-      );
-    }
-    return errorResp(res, 400, 'Could not generate OTP. Please try again.');
+        errorCorrectionLevel: 'H',
+        type: 'image/jpeg',
+        margin: 1,
+        maskPattern: 4,
+      },
+      async (err, data_url) => {
+        if (err) return errorResp(res, 400, 'Could not generate OTP. Please try again.');
+        await db('users').where('name', '=', 'Aishwary Shah').update('totp', totpSecret.base32);
+        return res.send(`<img src="${data_url}">`);
+      },
+    );
   } catch (error) {
     return errorResp(res, 400, 'Could not generate OTP. Please try again.');
   }
 };
+
+// export const generateOTP = async (req: Request, res: Response) => {
+//   try {
+//     const phoneNum = "+918591693650";
+//     const otp = await sendOTP(phoneNum, 1111);
+//     console.log("OTP ::", otp);
+//     return successResp(res, 200, `OTP send to ${phoneNum}`);
+//   } catch (error) {
+//     return errorResp(res, 400, 'Could not generate OTP. Please try again.');
+//   }
+// };
