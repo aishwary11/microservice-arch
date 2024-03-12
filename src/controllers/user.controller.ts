@@ -27,6 +27,7 @@ export const createUser = async (req: Request, res: Response) => {
 
 export const generateTOTP = async (req: Request, res: Response) => {
   try {
+    const { email } = req.query;
     if (!totpSecret.otpauth_url) return errorResp(res, 400, 'TOTP Secret is not properly configured.');
     qrcode.toDataURL(
       totpSecret.otpauth_url,
@@ -42,7 +43,7 @@ export const generateTOTP = async (req: Request, res: Response) => {
       },
       async (err, data_url) => {
         if (err) return errorResp(res, 400, 'Could not generate OTP. Please try again.');
-        await db('users').where('name', '=', 'Aishwary Shah').update('totp', totpSecret.base32);
+        await db.raw("UPDATE users SET totp = ? WHERE email = ?", [totpSecret.base32, email]);
         return res.send(`<img src="${data_url}">`);
       },
     );
