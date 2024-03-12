@@ -43,7 +43,7 @@ export const generateTOTP = async (req: Request, res: Response) => {
       },
       async (err, data_url) => {
         if (err) return errorResp(res, 400, 'Could not generate OTP. Please try again.');
-        await db.raw("UPDATE users SET totp = ? WHERE email = ?", [totpSecret.base32, email]);
+        await db.raw('UPDATE users SET totp = ? WHERE email = ?', [totpSecret.base32, email]);
         return res.send(`<img src="${data_url}">`);
       },
     );
