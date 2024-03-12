@@ -1,5 +1,5 @@
 import knex from 'knex';
-const pass = process.env.DB_PASS || 'aish';
+const pass = process.env.DB_PASS;
 const db = knex({
   client: 'mysql2',
   connection: {
