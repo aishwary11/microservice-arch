@@ -1,13 +1,13 @@
 import knex from 'knex';
 const pass = process.env.DB_PASS;
 const db = knex({
-  client: 'mysql2',
+  client: process.env.DBClient,
   connection: {
-    host: '127.0.0.1',
-    user: 'root',
+    host: process.env.HOSTDB,
+    user: process.env.DBUSER,
     port: 3306,
     password: pass,
-    database: 'micro_services',
+    database: process.env.DATABASE,
   },
   pool: { min: 0, max: 7 },
 });
